@@ -1,0 +1,16 @@
+{
+  "name": "panopticon",
+  "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Matthew Kaney",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/mindofmatthew/panopticon/issues"
+  },
+  "homepage": "https://github.com/mindofmatthew/panopticon#readme",
+  "devDependencies": {
+    "lerna": "^3.16.4"
+  }
+}
