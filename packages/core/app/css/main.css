@@ -1,11 +1,38 @@
+/*
+Generated from:
+https://www.colorbox.io/#steps=10#hue_start=50#hue_end=14#hue_curve=easeInQuad#sat_start=4#sat_end=7#sat_curve=easeOutQuad#sat_rate=130#lum_start=98#lum_end=10#lum_curve=linear#minor_steps_map=0
+*/
+:root {
+  --color-0: #faf8ed;
+  --color-1: #edebe0;
+  --color-2: #e1dfd3;
+  --color-3: #c8c5ba;
+  --color-4: #afaca2;
+  --color-5: #96938a;
+  --color-6: #7d7973;
+  --color-7: #64605c;
+  --color-8: #4b4845;
+  --color-9: #322f2e;
+  --color-10: #1a1817;
+}
+
 body {
+  background: var(--color-0);
+  color: var(--color-8);
   margin: 0;
-  font-family: sans-serif;
+  font-family: 'Roboto', sans-serif;
+}
+
+button {
+  background: var(--color-2);
+  color: var(--color-8);
+  border-radius: 5px;
+  border: none;
 }
 
 header {
   height: 40px;
-  background: #eee;
+  background: var(--color-1);
 }
 
 header h1 {
@@ -19,6 +46,18 @@ header h1 {
 }
 
 .cue {
-  border: solid 1px #555;
+  border: solid 1px var(--color-2);
   margin: 10px 0;
+  background: var(--color-1);
+}
+
+.cue .controls {
+  background: var(--color-1);
+}
+
+.cue .controls button {
+  background: var(--color-3);
+  height: 20px;
+  width: 20px;
+  padding: 0;
 }
