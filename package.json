@@ -1,5 +1,5 @@
 {
-  "name": "panopticon",
+  "name": "@panopticon",
   "private": true,
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
@@ -12,5 +12,9 @@
   "homepage": "https://github.com/mindofmatthew/panopticon#readme",
   "devDependencies": {
     "lerna": "^3.16.4"
+  },
+  "prettier": {
+    "singleQuote": true,
+    "jsxBracketSameLine": true
   }
 }
