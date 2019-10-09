@@ -3,7 +3,7 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-import { ACTION_TYPE } from '../reducers/symbols';
+import { ACTION_TYPE } from '../../reducers/symbols';
 
 export function Cue({ dispatch, cue: { id, name, data } }) {
   return (
@@ -19,7 +19,9 @@ export function Cue({ dispatch, cue: { id, name, data } }) {
           <FontAwesomeIcon icon={faTrash} />
         </button>
       </div>
-      {id}
+      <div className="data-type">
+        <h3>DMX</h3>
+      </div>
     </li>
   );
 }

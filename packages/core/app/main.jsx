@@ -1,35 +1,48 @@
-import React, { useReducer, useEffect } from 'react';
+import React, { useState, useReducer, useEffect } from 'react';
 import { render } from 'react-dom';
 
-import { Cue } from './components/Cue';
+import { Header } from './components/header';
+import { Cue } from './components/cue';
 import { Config } from './components/config';
 
 import { reducer, defaultState } from './reducers';
 import { ACTION_TYPE } from './reducers/symbols';
 
 function App() {
-  const [program, dispatch] = useReducer(reducer, defaultState);
+  const [program, dispatch] = useReducer(reducer, null);
+  const [isSaved, setIsSaved] = useState(true);
 
   useEffect(() => {
-    console.log('setting');
-    const timeoutId = setTimeout(() => {
-      fetch('/_/score', {
-        method: 'put',
-        body: JSON.stringify(program, null, 2)
-      });
-    }, 10000);
+    fetch('/_/score').then(r =>
+      r.json().then(score => dispatch({ [ACTION_TYPE]: 'LOAD_SCORE', score }))
+    );
+  }, []);
 
-    return () => {
-      console.log('clearing');
-      clearTimeout(timeoutId);
-    };
+  useEffect(() => {
+    setIsSaved(false);
+    if (program !== null) {
+      const timeoutId = setTimeout(() => {
+        fetch('/_/score', {
+          method: 'put',
+          body: JSON.stringify(program, null, 2)
+        }).then(() => {
+          setIsSaved(true);
+        });
+      }, 1000);
+
+      return () => {
+        clearTimeout(timeoutId);
+      };
+    }
   }, [program]);
+
+  if (program === null) {
+    return null;
+  }
 
   return (
     <>
-      <header>
-        <h1>Panopticon</h1>
-      </header>
+      <Header saved={isSaved} />
       <Config config={program.config} dispatch={dispatch} />
       <ul className="cue-list">
         {program.cues.map(cue => (

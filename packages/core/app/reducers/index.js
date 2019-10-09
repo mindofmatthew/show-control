@@ -1,3 +1,4 @@
+import { ACTION_TYPE } from './symbols';
 import { configReducer, defaultConfig } from './config';
 import { cueListReducer, defaultCueList } from './cues';
 
@@ -7,6 +8,10 @@ export const defaultState = {
 };
 
 export function reducer(state, action) {
+  if (action[ACTION_TYPE] === 'LOAD_SCORE') {
+    return action.score;
+  }
+
   let newState = state;
 
   // Configuration
