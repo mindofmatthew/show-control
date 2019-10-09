@@ -1,8 +1,23 @@
 const path = require('path');
 const express = require('express');
-const app = express();
-const port = 8000;
+const fs = require('fs').promises;
 
-app.use(express.static(path.join(__dirname, '../public')));
+exports.panopticon = scoreFile => {
+  const app = express();
+  const port = 8000;
 
-app.listen(port, () => console.log(`Serving on port ${port}`));
+  app.use(express.static(path.join(__dirname, '../public')));
+  app.use(express.text());
+
+  app.listen(port, () => console.log(`Serving on port ${port}`));
+
+  app.get('/_/score', async (req, res) => {
+    res.type('text/plain').send(await fs.readFile(`${scoreFile}`));
+  });
+
+  app.put('/_/score', async (req, res) => {
+    const contents = req.body;
+    await fs.writeFile(`${scoreFile}`, contents);
+    res.type('text/plain').send(contents);
+  });
+};
