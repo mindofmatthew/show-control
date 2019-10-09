@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react';
+import React, { useReducer, useEffect } from 'react';
 import { render } from 'react-dom';
 
 import { Cue } from './components/Cue';
@@ -9,6 +9,21 @@ import { ACTION_TYPE } from './reducers/symbols';
 
 function App() {
   const [program, dispatch] = useReducer(reducer, defaultState);
+
+  useEffect(() => {
+    console.log('setting');
+    const timeoutId = setTimeout(() => {
+      fetch('/_/score', {
+        method: 'put',
+        body: JSON.stringify(program, null, 2)
+      });
+    }, 10000);
+
+    return () => {
+      console.log('clearing');
+      clearTimeout(timeoutId);
+    };
+  }, [program]);
 
   return (
     <>
