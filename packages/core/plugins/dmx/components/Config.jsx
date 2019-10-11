@@ -25,7 +25,7 @@ function LightConfig({ id, name, channel, type, dispatch }) {
         type="text"
         value={name}
         onChange={({ target: { value } }) => {
-          dispatch({ type: 'CHANGE_NAME', id, value });
+          dispatch({ type: 'CHANGE_LIGHT_NAME', id, value });
         }}
       />
       <input
@@ -34,13 +34,13 @@ function LightConfig({ id, name, channel, type, dispatch }) {
         max="511"
         value={channel}
         onChange={({ target: { value } }) => {
-          dispatch({ type: 'CHANGE_CHANNEL', id, value });
+          dispatch({ type: 'CHANGE_LIGHT_CHANNEL', id, value });
         }}
       />
       <select
         value={type}
         onChange={({ target: { value } }) => {
-          dispatch({ type: 'CHANGE_TYPE', id, value });
+          dispatch({ type: 'CHANGE_LIGHT_TYPE', id, value });
         }}>
         <option value="white">White (1 channel)</option>
         <option value="rgb">RGB (3 channels)</option>

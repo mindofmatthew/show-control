@@ -3,9 +3,9 @@ import React from 'react';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
-import { ACTION_TYPE } from '../../reducers/symbols';
+import { Cue as DMXCue } from '../../../plugins/dmx/components/Cue';
 
-export function Cue({ dispatch, cue: { id, name, data } }) {
+export function Cue({ config, dispatch, cue: { id, name, data } }) {
   return (
     <li className="cue">
       <div className="controls">
@@ -14,13 +14,19 @@ export function Cue({ dispatch, cue: { id, name, data } }) {
         </button>
         <button
           onClick={() => {
-            dispatch({ [ACTION_TYPE]: 'DELETE_CUE', id });
+            dispatch({ type: 'DELETE_CUE', id });
           }}>
           <FontAwesomeIcon icon={faTrash} />
         </button>
       </div>
       <div className="data-type">
-        <h3>DMX</h3>
+        <DMXCue
+          config={config.dmx}
+          data={data.dmx}
+          dispatch={action =>
+            dispatch({ type: 'EDIT_CUE_PLUGIN', plugin: dmx, action })
+          }
+        />
       </div>
     </li>
   );

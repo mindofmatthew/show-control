@@ -1,10 +1,6 @@
-import { genId } from '../../common';
+const { genId } = require('../../../common');
 
-export const defaultConfig = {
-  lights: []
-};
-
-export function configReducer(state, action) {
+exports.reducer = (state, action) => {
   switch (action.type) {
     case 'ADD_LIGHT':
       return {
@@ -19,21 +15,21 @@ export function configReducer(state, action) {
           }
         ]
       };
-    case 'CHANGE_NAME':
+    case 'CHANGE_LIGHT_NAME':
       return {
         ...state,
         lights: state.lights.map(light =>
           light.id === action.id ? { ...light, name: action.value } : light
         )
       };
-    case 'CHANGE_CHANNEL':
+    case 'CHANGE_LIGHT_CHANNEL':
       return {
         ...state,
         lights: state.lights.map(light =>
           light.id === action.id ? { ...light, channel: action.value } : light
         )
       };
-    case 'CHANGE_TYPE':
+    case 'CHANGE_LIGHT_TYPE':
       return {
         ...state,
         lights: state.lights.map(light =>
@@ -46,4 +42,4 @@ export function configReducer(state, action) {
         lights: state.lights.filter(light => light.id !== action.id)
       };
   }
-}
+};
