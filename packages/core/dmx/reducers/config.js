@@ -4,8 +4,6 @@ export const defaultConfig = {
   lights: []
 };
 
-let id = 0;
-
 export function configReducer(state, action) {
   switch (action.type) {
     case 'ADD_LIGHT':
