@@ -12,7 +12,11 @@ exports.panopticon = scoreFile => {
   app.listen(port, () => console.log(`Serving on port ${port}`));
 
   app.get('/_/score', async (req, res) => {
-    res.type('text/plain').send(await fs.readFile(`${scoreFile}`));
+    let contents = 'null';
+    try {
+      contents = await fs.readFile(`${scoreFile}`);
+    } catch {}
+    res.type('text/plain').send(contents);
   });
 
   app.put('/_/score', async (req, res) => {

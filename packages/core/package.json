@@ -29,5 +29,8 @@
   },
   "bin": {
     "panopticon": "src/cli.js"
-  }
+  },
+  "browserslist": [
+    "last 1 Chrome version"
+  ]
 }

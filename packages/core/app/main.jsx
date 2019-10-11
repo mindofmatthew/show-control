@@ -13,9 +13,11 @@ function App() {
   const [isSaved, setIsSaved] = useState(true);
 
   useEffect(() => {
-    fetch('/_/score').then(r =>
-      r.json().then(score => dispatch({ [ACTION_TYPE]: 'LOAD_SCORE', score }))
-    );
+    (async () => {
+      const r = await fetch('/_/score');
+      const score = await r.json();
+      dispatch({ [ACTION_TYPE]: 'LOAD_SCORE', score: score || defaultState });
+    })();
   }, []);
 
   useEffect(() => {
