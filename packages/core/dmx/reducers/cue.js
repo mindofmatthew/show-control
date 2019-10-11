@@ -1,1 +1,3 @@
-export default function(state, action) {}
+export function cueReducer(state, action) {
+  return state;
+}

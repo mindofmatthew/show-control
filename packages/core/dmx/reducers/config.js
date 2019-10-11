@@ -1,3 +1,5 @@
+import { genId } from '../../common';
+
 export const defaultConfig = {
   lights: []
 };
@@ -11,7 +13,12 @@ export function configReducer(state, action) {
         ...state,
         lights: [
           ...state.lights,
-          { id: id++, name: 'dmx1', channel: 0, type: 'white' }
+          {
+            id: genId(),
+            name: 'dmx1',
+            channel: 0,
+            type: 'white'
+          }
         ]
       };
     case 'CHANGE_NAME':
@@ -34,6 +41,11 @@ export function configReducer(state, action) {
         lights: state.lights.map(light =>
           light.id === action.id ? { ...light, type: action.value } : light
         )
+      };
+    case 'DELETE_LIGHT':
+      return {
+        ...state,
+        lights: state.lights.filter(light => light.id !== action.id)
       };
   }
 }

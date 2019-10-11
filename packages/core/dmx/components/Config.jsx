@@ -45,6 +45,12 @@ function LightConfig({ id, name, channel, type, dispatch }) {
         <option value="white">White (1 channel)</option>
         <option value="rgb">RGB (3 channels)</option>
       </select>
+      <button
+        onClick={() => {
+          dispatch({ type: 'DELETE_LIGHT', id });
+        }}>
+        &times;
+      </button>
     </li>
   );
 }
