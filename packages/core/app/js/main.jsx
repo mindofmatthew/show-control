@@ -27,14 +27,28 @@ function App() {
     };
   }, []);
 
+  let [locked, setLocked] = useState(localStorage.getItem('locked') === 'true');
+  useEffect(() => {
+    localStorage.setItem('locked', locked);
+  }, [locked]);
+
+  let [configuring, setConfiguring] = useState(false);
+
   if (score === null) {
     return null;
   }
 
   return (
     <>
-      <Header title="Panopticon" />
-      <Config config={score.config} dispatch={dispatch} />
+      <Header
+        title={score.title}
+        locked={locked}
+        configuring={configuring}
+        onLockedUpdate={setLocked}
+        onConfiguringUpdate={setConfiguring}
+        dispatch={dispatch}
+      />
+      <Config open={configuring} config={score.config} dispatch={dispatch} />
       <ul className="cue-list">
         {score.cues.map(cue => (
           <Cue

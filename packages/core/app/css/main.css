@@ -30,14 +30,54 @@ button {
   border: none;
 }
 
+button:hover,
+button.active {
+  background: var(--color-4);
+  color: var(--color-0);
+}
+
+button:focus {
+  outline: none;
+}
+
 header {
   height: 40px;
   background: var(--color-1);
+  position: relative;
+  z-index: 2;
+}
+
+header.configuring {
+  box-shadow: 0 0 8px var(--color-3);
 }
 
 header h1 {
+  display: inline-block;
   margin: 0;
   padding: 5px;
+  min-width: 100px;
+}
+
+header button {
+  width: 30px;
+  height: 30px;
+}
+
+.configuration {
+  position: absolute;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+  padding: 60px 20px 20px;
+  top: -100%;
+  background: var(--color-1);
+  z-index: 1;
+  overflow-y: scroll;
+  transition: top 0.4s;
+}
+
+.configuration.open {
+  top: 0;
 }
 
 .cue-list {
