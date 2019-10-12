@@ -3,7 +3,7 @@
   "description": "NodeJS/Browser-based system for controlling technology in live performance.",
   "main": "src/index.js",
   "scripts": {
-    "dev": "panopticon dev/score.json & parcel watch app/index.html --out-dir public --no-hmr",
+    "dev": "nodemon src/cli.js dev/score.json & parcel watch app/index.html --out-dir public --no-hmr",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
@@ -19,6 +19,7 @@
     "express": "^4.17.1",
     "express-ws": "^4.0.0",
     "minimist": "^1.2.0",
+    "nodemon": "^1.19.3",
     "react": "^16.10.2",
     "react-dom": "^16.10.2"
   },
@@ -32,5 +33,13 @@
   },
   "browserslist": [
     "last 1 Chrome version"
-  ]
+  ],
+  "nodemonConfig": {
+    "ignore": [
+      "dev",
+      "app",
+      ".cache",
+      "public"
+    ]
+  }
 }
