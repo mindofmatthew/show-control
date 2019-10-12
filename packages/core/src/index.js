@@ -45,18 +45,4 @@ exports.panopticon = async scoreFile => {
   app.use(express.text());
 
   app.listen(port, () => console.log(`Serving on port ${port}`));
-  //
-  // app.get('/_/score', async (req, res) => {
-  //   let contents = 'null';
-  //   try {
-  //     contents = await fs.readFile(`${scoreFile}`);
-  //   } catch {}
-  //   res.type('text/plain').send(contents);
-  // });
-  //
-  // app.put('/_/score', async (req, res) => {
-  //   const contents = req.body;
-  //   await fs.writeFile(`${scoreFile}`, contents);
-  //   res.type('text/plain').send(contents);
-  // });
 };
