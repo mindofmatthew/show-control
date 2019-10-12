@@ -26,12 +26,18 @@ exports.panopticon = async scoreFile => {
 
   expressWS(app);
 
-  app.ws('/_/score', (ws, req) => {
+  let saveTimeout = 0;
+
+  app.ws('/_/score', ws => {
     ws.send(JSON.stringify(score));
 
     ws.on('message', action => {
       score = reducer(score, JSON.parse(action));
       ws.send(JSON.stringify(score));
+      clearTimeout(saveTimeout);
+      saveTimeout = setTimeout(() => {
+        fs.writeFile(scoreFile, JSON.stringify(score));
+      }, 1000);
     });
   });
 

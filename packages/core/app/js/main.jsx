@@ -33,7 +33,7 @@ function App() {
 
   return (
     <>
-      <Header />
+      <Header title="Panopticon" />
       <Config config={score.config} dispatch={dispatch} />
       <ul className="cue-list">
         {score.cues.map(cue => (
