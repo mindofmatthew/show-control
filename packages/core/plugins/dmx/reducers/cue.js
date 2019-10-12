@@ -1,10 +1,9 @@
-const { genId } = require('../../../common');
-
 exports.empty = {
-  lights: []
+  lights: {}
 };
 
 exports.reducer = (state, action) => {
+  const lights = { ...state.lights };
   switch (action.type) {
     // case 'CHANGE_TYPE':
     //   return {
@@ -14,17 +13,14 @@ exports.reducer = (state, action) => {
     //     )
     //   };
     case 'DELETE_LIGHT':
-      return {
-        ...state,
-        lights: state.lights.filter(light => light.id !== action.id)
-      };
+      delete lights[action.id];
+      return { ...state, lights };
     case 'ADD_LIGHT_CUE':
-      return {
-        ...state,
-        lights: [
-          ...lights,
-          { id: genId, lightId: action.lightId, value: action.value }
-        ]
-      };
+      lights[action.id] = action.value;
+      return { ...state, lights };
+    case 'EDIT_LIGHT_CUE':
+      lights[action.id] = action.value;
+      return { ...state, lights };
   }
+  return state;
 };
