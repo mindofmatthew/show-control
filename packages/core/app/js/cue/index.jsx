@@ -6,19 +6,22 @@ import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Cue as DMXCue } from '../../../plugins/dmx/components/Cue';
 import { Cue as ProjectionCue } from '../../../plugins/projection/components/Cue';
 
-export function Cue({ config, dispatch, cue: { id, name, data } }) {
+export function Cue({ config, dispatch, cue: { id, name, data }, locked }) {
   return (
     <li className="cue">
-      <div className="controls">
-        <button>
-          <FontAwesomeIcon icon={faEdit} />
-        </button>
-        <button
-          onClick={() => {
-            dispatch({ type: 'DELETE_CUE', id });
-          }}>
-          <FontAwesomeIcon icon={faTrash} />
-        </button>
+      <div className="header">
+        <h3>Cue Title</h3>
+        <div className="controls">
+          <button>
+            <FontAwesomeIcon icon={faEdit} />
+          </button>
+          <button
+            onClick={() => {
+              dispatch({ type: 'DELETE_CUE', id });
+            }}>
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        </div>
       </div>
       <div className="data-type">
         <DMXCue
