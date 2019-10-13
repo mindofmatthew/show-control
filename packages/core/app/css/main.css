@@ -84,16 +84,40 @@ header button {
 .cue-list {
   list-style: none;
   padding: 0 10px;
+  counter-reset: cue-number;
 }
 
 .cue {
-  border: solid 1px var(--color-2);
   margin: 10px 0;
   background: var(--color-1);
+  counter-increment: cue-number;
+}
+
+.cue .header {
+  background: var(--color-2);
+  display: flex;
+  position: relative;
+}
+
+.cue .header::before {
+  content: counters(cue-number, '.') ' ';
+  display: block;
+  background: var(--color-3);
+}
+
+.cue .header::before,
+.cue .header h3 {
+  margin: 0;
+  padding: 4px 8px;
+  font-weight: bold;
+  font-size: 17px;
 }
 
 .cue .controls {
-  background: var(--color-1);
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  display: flex;
 }
 
 .cue .controls button {
@@ -101,10 +125,13 @@ header button {
   height: 20px;
   width: 20px;
   padding: 0;
+  margin-left: 4px;
 }
 
-li {
-  line-height: 35px;
+.cue .controls button:hover,
+.cue .controls button.active {
+  background: var(--color-6);
+  color: var(--color-2);
 }
 
 label {
