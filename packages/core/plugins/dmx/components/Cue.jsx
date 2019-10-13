@@ -9,48 +9,56 @@ export function Cue({ config, data, dispatch }) {
       ) : (
         <>
           <ul>
-            {config.lights
-              .filter(l => l.id in data.lights)
-              .map(l => (
-                <LightCue
-                  key={l.id}
-                  id={l.id}
-                  light={config.lights.find(o => (o.id = l.id))}
-                  value={data.lights[l.id]}
-                  dispatch={dispatch}></LightCue>
-              ))}
+            {config.lights.map(l => (
+              <LightCue
+                key={l.id}
+                id={l.id}
+                light={config.lights.find(o => o.id === l.id)}
+                enabled={l.id in data.lights}
+                value={data.lights[l.id]}
+                dispatch={dispatch}
+              />
+            ))}
           </ul>
-          {config.lights.every(l => l.id in data.lights) || (
-            <button
-              onClick={() => {
-                dispatch({
-                  type: 'ADD_LIGHT_CUE',
-                  id: config.lights[0].id,
-                  value: 0
-                });
-              }}>
-              Add light cue
-            </button>
-          )}
         </>
       )}
     </div>
   );
 }
 
-function LightCue({ id, light, value, dispatch }) {
+function LightCue({ id, light, enabled, value, dispatch }) {
   return (
     <li>
-      {light.name}:&nbsp;
-      <input
-        value={value}
-        onChange={({ target: { value } }) => {
-          dispatch({
-            type: 'EDIT_LIGHT_CUE',
-            id,
-            value
-          });
-        }}></input>
+      <label>
+        <input
+          type="checkbox"
+          checked={enabled}
+          onChange={({ target: { checked } }) => {
+            console.log(checked);
+            if (checked) {
+              dispatch({ type: 'ADD_LIGHT_CUE', id });
+            } else {
+              dispatch({ type: 'DELETE_LIGHT_CUE', id });
+            }
+          }}
+        />
+        {light.name}:&nbsp;
+      </label>
+      {enabled ? (
+        <input
+          type={light.type === 'white' ? 'range' : 'color'}
+          min="0"
+          max="255"
+          value={value}
+          onChange={({ target: { value } }) => {
+            dispatch({
+              type: 'EDIT_LIGHT_CUE',
+              id,
+              value
+            });
+          }}
+        />
+      ) : null}
     </li>
   );
 }

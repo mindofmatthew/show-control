@@ -12,11 +12,11 @@ exports.reducer = (state, action) => {
     //       light.id === action.id ? { ...light, type: action.value } : light
     //     )
     //   };
-    case 'DELETE_LIGHT':
+    case 'DELETE_LIGHT_CUE':
       delete lights[action.id];
       return { ...state, lights };
     case 'ADD_LIGHT_CUE':
-      lights[action.id] = action.value;
+      lights[action.id] = 0;
       return { ...state, lights };
     case 'EDIT_LIGHT_CUE':
       lights[action.id] = action.value;
