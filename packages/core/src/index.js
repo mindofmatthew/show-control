@@ -36,7 +36,7 @@ exports.panopticon = async scoreFile => {
       ws.send(JSON.stringify(score));
       clearTimeout(saveTimeout);
       saveTimeout = setTimeout(() => {
-        fs.writeFile(scoreFile, JSON.stringify(score));
+        fs.writeFile(scoreFile, JSON.stringify(score, null, 2));
       }, 1000);
     });
   });
