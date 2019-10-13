@@ -1,21 +1,29 @@
 import React, { useState } from 'react';
 
-export function Cue() {
-  const [corners, setCorners] = useState({
-    northwest: { x: 0, y: 0 },
-    northeast: { x: 700, y: 0 },
-    southwest: { x: 0, y: 700 },
-    southeast: { x: 700, y: 700 }
-  });
+export function Cue({ config, data, dispatch }) {
   return (
-    <CornerPicker
-      value={corners}
-      onChange={v => {
-        setCorners(v);
-      }}
-      maxX={1024}
-      maxY={768}
-    />
+    <div>
+      <h3>Projection</h3>
+
+      <ul>
+        {data.map(c => (
+          <li key={c.id}>
+            <CornerPicker
+              value={c.corners}
+              onChange={corners => {
+                dispatch({
+                  type: 'EDIT_CUE',
+                  id: c.id,
+                  data: { ...c, corners }
+                });
+              }}
+              maxX={1024}
+              maxY={768}
+            />
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 }
 

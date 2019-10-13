@@ -32,10 +32,15 @@ export function Cue({ config, dispatch, cue: { id, name, data }, locked }) {
           }}
         />
         <ProjectionCue
-          config={config.dmx}
-          data={data.dmx}
+          config={config.projection}
+          data={data.projection}
           dispatch={action => {
-            dispatch({ type: 'EDIT_CUE_PLUGIN', plugin: 'dmx', action, id });
+            dispatch({
+              type: 'EDIT_CUE_PLUGIN',
+              plugin: 'projection',
+              action,
+              id
+            });
           }}
         />
       </div>

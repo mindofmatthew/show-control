@@ -3,6 +3,7 @@ const { genId } = require('../../common');
 const plugins = {};
 
 plugins.dmx = require('../../plugins/dmx/reducers/cue');
+plugins.projection = require('../../plugins/projection/reducers/cue');
 
 const emptyData = {};
 
