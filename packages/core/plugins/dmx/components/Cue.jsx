@@ -1,6 +1,23 @@
 import React from 'react';
 
-export function Cue({ config, data, dispatch }) {
+export function Cue({ editing, config, data, dispatch }) {
+  if (!editing) {
+    return Object.keys(data.lights).length > 0 ? (
+      <div className="cue-config">
+        <h3>DMX</h3>
+        <ul>
+          {config.lights
+            .filter(l => l.id in data.lights)
+            .map(l => (
+              <li>
+                {l.name}: {data.lights[l.id]}
+              </li>
+            ))}
+        </ul>
+      </div>
+    ) : null;
+  }
+
   return (
     <div className="cue-config">
       <h3>DMX</h3>
@@ -12,8 +29,7 @@ export function Cue({ config, data, dispatch }) {
             {config.lights.map(l => (
               <LightCue
                 key={l.id}
-                id={l.id}
-                light={config.lights.find(o => o.id === l.id)}
+                light={l}
                 enabled={l.id in data.lights}
                 value={data.lights[l.id]}
                 dispatch={dispatch}
@@ -26,7 +42,7 @@ export function Cue({ config, data, dispatch }) {
   );
 }
 
-function LightCue({ id, light, enabled, value, dispatch }) {
+function LightCue({ light: { id, name, type }, enabled, value, dispatch }) {
   return (
     <li>
       <label>
@@ -34,7 +50,6 @@ function LightCue({ id, light, enabled, value, dispatch }) {
           type="checkbox"
           checked={enabled}
           onChange={({ target: { checked } }) => {
-            console.log(checked);
             if (checked) {
               dispatch({ type: 'ADD_LIGHT_CUE', id });
             } else {
@@ -42,11 +57,11 @@ function LightCue({ id, light, enabled, value, dispatch }) {
             }
           }}
         />
-        {light.name}
+        {name}
       </label>
       {enabled ? (
         <input
-          type={light.type === 'white' ? 'range' : 'color'}
+          type={type === 'white' ? 'range' : 'color'}
           min="0"
           max="255"
           value={value}
