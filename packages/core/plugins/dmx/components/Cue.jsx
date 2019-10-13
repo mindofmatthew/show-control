@@ -2,7 +2,7 @@ import React from 'react';
 
 export function Cue({ config, data, dispatch }) {
   return (
-    <div>
+    <div className="cue-config">
       <h3>DMX</h3>
       {config.lights.length === 0 ? (
         <p>No lights set up yet...</p>
@@ -42,7 +42,7 @@ function LightCue({ id, light, enabled, value, dispatch }) {
             }
           }}
         />
-        {light.name}:&nbsp;
+        {light.name}
       </label>
       {enabled ? (
         <input
