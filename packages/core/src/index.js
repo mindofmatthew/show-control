@@ -3,6 +3,8 @@ const express = require('express');
 const expressWS = require('express-ws');
 const fs = require('fs').promises;
 
+const { router: projectionRouter } = require('../plugins/projection/router');
+
 const { reducer } = require('./reducers');
 
 exports.panopticon = async scoreFile => {
@@ -40,6 +42,8 @@ exports.panopticon = async scoreFile => {
       }, 1000);
     });
   });
+
+  app.use('/plugins/projection', projectionRouter);
 
   app.use(express.static(path.join(__dirname, '../public')));
   app.use(express.text());
