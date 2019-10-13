@@ -1,4 +1,5 @@
 const { genId } = require('../../../common');
+const { render } = require('../router');
 
 exports.empty = [];
 
@@ -21,6 +22,8 @@ exports.reducer = (state, action) => {
         }
       ];
     case 'EDIT_CUE':
+      // TODO: move this to a better place
+      render(action.data);
       return state.map(cue => (cue.id === action.id ? action.data : cue));
   }
   return state;
