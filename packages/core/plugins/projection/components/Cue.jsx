@@ -20,8 +20,20 @@ export function Cue({ config, data, dispatch }) {
               maxX={1024}
               maxY={768}
             />
+            <button
+              onClick={() => {
+                dispatch({ type: 'DELETE_CUE', id: c.id });
+              }}>
+              Delete
+            </button>
           </li>
         ))}
+        <button
+          onClick={() => {
+            dispatch({ type: 'ADD_CUE' });
+          }}>
+          Add Projection
+        </button>
       </ul>
     </div>
   );
