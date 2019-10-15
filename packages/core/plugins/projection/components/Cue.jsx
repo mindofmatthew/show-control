@@ -119,8 +119,6 @@ function Thumb({ value: { x, y }, onChange, maxX, maxY }) {
           x: Math.round((screenX / 100) * maxX),
           y: Math.round((screenY / 100) * maxY)
         });
-      }}>
-      ({x},{y})
-    </div>
+      }}></div>
   );
 }
