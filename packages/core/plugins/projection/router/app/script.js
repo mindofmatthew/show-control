@@ -1,10 +1,4 @@
 async function main() {
-  //Set up websocket
-  const ws = new WebSocket(`ws:${location.host}/plugins/projection/_/feed`);
-  ws.addEventListener('message', e => {
-    console.log(e.data);
-  });
-
   //Set up canvas resizing
   const canvas = document.getElementById('renderer');
 
@@ -67,40 +61,71 @@ async function main() {
     );
   }
 
-  // Get position attribute location
-  const attrLocation = context.getAttribLocation(
-    shaderProgram,
-    'aVertexPosition'
-  );
+  let shape = new Video(context, shaderProgram);
 
-  // Create a buffer of position data
-  const positionBuffer = context.createBuffer();
-  context.bindBuffer(context.ARRAY_BUFFER, positionBuffer);
+  //Set up websocket
+  const ws = new WebSocket(`ws:${location.host}/plugins/projection/_/feed`);
+  ws.addEventListener('message', e => {
+    let data = JSON.parse(e.data);
+    shape.update(
+      data.corners.northwest.x / 1024,
+      data.corners.northwest.y / 768,
+      data.corners.northeast.x / 1024,
+      data.corners.northeast.y / 768,
+      data.corners.southwest.x / 1024,
+      data.corners.southwest.y / 768,
+      data.corners.southeast.x / 1024,
+      data.corners.southeast.y / 768
+    );
 
-  const positions = [-0.5, 0.5, 0.5, 0.5, -0.5, -0.5, 0.5, -0.5];
-  context.bufferData(
-    context.ARRAY_BUFFER,
-    new Float32Array(positions),
-    context.STATIC_DRAW
-  );
+    render();
+  });
 
-  // Render
-  context.clear(context.COLOR_BUFFER_BIT);
+  function render() {
+    context.clear(context.COLOR_BUFFER_BIT);
+    context.useProgram(shaderProgram);
 
-  context.bindBuffer(context.ARRAY_BUFFER, positionBuffer);
-  context.vertexAttribPointer(attrLocation, 2, context.FLOAT, false, 0, 0);
-  context.enableVertexAttribArray(attrLocation);
-
-  context.useProgram(shaderProgram);
-  context.drawArrays(context.TRIANGLE_STRIP, 0, 4);
+    shape.render();
+  }
 }
 
 class Video {
-  constructor() {}
+  constructor(context, shaderProgram) {
+    this.context = context;
+    this.shader = shaderProgram;
+    this.buffer = this.context.createBuffer();
+
+    this.attribute = this.context.getAttribLocation(
+      this.shader,
+      'aVertexPosition'
+    );
+  }
 
   enable() {}
 
-  update() {}
+  update(...positions) {
+    this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffer);
+    this.context.bufferData(
+      this.context.ARRAY_BUFFER,
+      new Float32Array(positions),
+      this.context.STATIC_DRAW
+    );
+  }
+
+  render() {
+    this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffer);
+    this.context.vertexAttribPointer(
+      this.attribute,
+      2,
+      this.context.FLOAT,
+      false,
+      0,
+      0
+    );
+    this.context.enableVertexAttribArray(this.attribute);
+
+    this.context.drawArrays(this.context.TRIANGLE_STRIP, 0, 4);
+  }
 
   disable() {}
 
