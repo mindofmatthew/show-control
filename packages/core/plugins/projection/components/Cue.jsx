@@ -17,8 +17,8 @@ export function Cue({ config, data, dispatch }) {
                   data: { ...c, corners }
                 });
               }}
-              maxX={1024}
-              maxY={768}
+              maxX={1}
+              maxY={1}
             />
             <button
               onClick={() => {
@@ -88,8 +88,8 @@ function Thumb({ value: { x, y }, onChange, maxX, maxY }) {
         borderRadius: 3
       }}
       onKeyDown={e => {
-        let delta = 1;
-        if (e.shiftKey) delta = 20;
+        let delta = 0.001;
+        if (e.shiftKey) delta = 0.01;
         switch (e.key) {
           case 'ArrowLeft':
             onChange({ x: x - delta, y });
@@ -116,8 +116,8 @@ function Thumb({ value: { x, y }, onChange, maxX, maxY }) {
         const screenX = e.clientX - e.target.parentElement.offsetLeft - 5;
         const screenY = e.clientY - e.target.parentElement.offsetTop - 5;
         onChange({
-          x: Math.round((screenX / 100) * maxX),
-          y: Math.round((screenY / 100) * maxY)
+          x: (screenX / 100) * maxX,
+          y: (screenY / 100) * maxY
         });
       }}></div>
   );

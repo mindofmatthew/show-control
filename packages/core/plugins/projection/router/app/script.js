@@ -75,14 +75,18 @@ async function main() {
           projections[projection.id].update(projection.corners);
         }
         break;
-      case 'REMOVE':
+      case 'DELETE':
+        delete projections[action.id];
         break;
-      case 'EDIT_POINTS':
+      case 'EDIT':
+        projections[action.projection.id].update(action.projection.corners);
         break;
     }
 
     render();
   });
+
+  render();
 
   function render() {
     context.clear(context.COLOR_BUFFER_BIT);
@@ -96,14 +100,14 @@ async function main() {
 
 function unpackCorners({ northwest, northeast, southwest, southeast }) {
   return [
-    northwest.x / 1024,
-    northwest.y / 768,
-    northeast.x / 1024,
-    northeast.y / 768,
-    southwest.x / 1024,
-    southwest.y / 768,
-    southeast.x / 1024,
-    southeast.y / 768
+    northwest.x,
+    northwest.y,
+    northeast.x,
+    northeast.y,
+    southwest.x,
+    southwest.y,
+    southeast.x,
+    southeast.y
   ];
 }
 

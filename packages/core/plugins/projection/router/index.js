@@ -5,16 +5,6 @@ const expressWS = require('express-ws');
 const router = express.Router();
 expressWS(router);
 
-let projections = [];
-
-exports.init = score => {
-  console.log(JSON.stringify(score));
-  projections = score.cues.reduce(
-    (list, cue) => list.concat(cue.data.projection),
-    []
-  );
-};
-
 let latestWs;
 
 // TODO: Serve for /client/:id
@@ -26,13 +16,33 @@ router.ws('/_/feed', ws => {
 });
 
 exports.router = router;
-exports.render = m => {
-  if (latestWs)
-    latestWs.send(
-      JSON.stringify({
-        ...m,
-        // Render a white quad instead of the asset for calibration
-        mode: 'EDIT'
-      })
-    );
+
+let projections = [];
+
+exports.init = score => {
+  projections = score.cues.reduce(
+    (list, cue) => list.concat(cue.data.projection),
+    []
+  );
+};
+
+exports.addCue = c => {
+  projections.push(c);
+  if (latestWs) {
+    latestWs.send(JSON.stringify({ type: 'ADD', projections: [c] }));
+  }
+};
+
+exports.editCue = c => {
+  projections = projections.map(p => (p.id === c.id ? c : p));
+  if (latestWs) {
+    latestWs.send(JSON.stringify({ type: 'EDIT', projection: c }));
+  }
+};
+
+exports.deleteCue = id => {
+  projections = projections.filter(p => p.id !== id);
+  if (latestWs) {
+    latestWs.send(JSON.stringify({ type: 'DELETE', id }));
+  }
 };
