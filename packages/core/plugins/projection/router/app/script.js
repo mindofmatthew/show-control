@@ -61,22 +61,25 @@ async function main() {
     );
   }
 
-  let shape = new Video(context, shaderProgram);
+  let projections = {};
 
   //Set up websocket
   const ws = new WebSocket(`ws:${location.host}/plugins/projection/_/feed`);
-  ws.addEventListener('message', e => {
-    let data = JSON.parse(e.data);
-    shape.update(
-      data.corners.northwest.x / 1024,
-      data.corners.northwest.y / 768,
-      data.corners.northeast.x / 1024,
-      data.corners.northeast.y / 768,
-      data.corners.southwest.x / 1024,
-      data.corners.southwest.y / 768,
-      data.corners.southeast.x / 1024,
-      data.corners.southeast.y / 768
-    );
+  ws.addEventListener('message', m => {
+    let action = JSON.parse(m.data);
+
+    switch (action.type) {
+      case 'ADD':
+        for (let projection of action.projections) {
+          projections[projection.id] = new Projection(context, shaderProgram);
+          projections[projection.id].update(projection.corners);
+        }
+        break;
+      case 'REMOVE':
+        break;
+      case 'EDIT_POINTS':
+        break;
+    }
 
     render();
   });
@@ -85,11 +88,26 @@ async function main() {
     context.clear(context.COLOR_BUFFER_BIT);
     context.useProgram(shaderProgram);
 
-    shape.render();
+    for (let id in projections) {
+      projections[id].render();
+    }
   }
 }
 
-class Video {
+function unpackCorners({ northwest, northeast, southwest, southeast }) {
+  return [
+    northwest.x / 1024,
+    northwest.y / 768,
+    northeast.x / 1024,
+    northeast.y / 768,
+    southwest.x / 1024,
+    southwest.y / 768,
+    southeast.x / 1024,
+    southeast.y / 768
+  ];
+}
+
+class Projection {
   constructor(context, shaderProgram) {
     this.context = context;
     this.shader = shaderProgram;
@@ -103,7 +121,8 @@ class Video {
 
   enable() {}
 
-  update(...positions) {
+  update(corners) {
+    const positions = unpackCorners(corners);
     this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffer);
     this.context.bufferData(
       this.context.ARRAY_BUFFER,

@@ -3,7 +3,10 @@ const express = require('express');
 const expressWS = require('express-ws');
 const fs = require('fs').promises;
 
-const { router: projectionRouter } = require('../plugins/projection/router');
+const {
+  init: projectionInit,
+  router: projectionRouter
+} = require('../plugins/projection/router');
 
 const { reducer } = require('./reducers');
 
@@ -22,6 +25,9 @@ exports.panopticon = async scoreFile => {
     await fs.mkdir(path.dirname(scorePath), { recursive: true });
     await fs.writeFile(scorePath, JSON.stringify(score));
   }
+
+  // Init plugins
+  projectionInit(score);
 
   const app = express();
   const port = 8000;

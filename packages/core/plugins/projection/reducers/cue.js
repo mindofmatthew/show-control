@@ -15,9 +15,9 @@ exports.reducer = (state, action) => {
           asset: 'foo/bar/baz.webm',
           corners: {
             northwest: { x: 0, y: 0 },
-            northeast: { x: 1024, y: 0 },
-            southwest: { x: 0, y: 768 },
-            southeast: { x: 1024, y: 768 }
+            northeast: { x: 1, y: 0 },
+            southwest: { x: 0, y: 1 },
+            southeast: { x: 1, y: 1 }
           }
         }
       ];
