@@ -1,3 +1,5 @@
 const dmx = require('dmx');
 
-exports.init = () => {};
+exports.update = state => {
+  console.log('dmx updated');
+};
