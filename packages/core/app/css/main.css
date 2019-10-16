@@ -99,9 +99,15 @@ header button {
   position: relative;
 }
 
+.cue.current .header {
+  background: var(--color-7);
+  color: white;
+}
+
 .cue .header::before {
   content: counters(cue-number, '.') ' ';
   display: block;
+  color: var(--color-8);
   background: var(--color-3);
 }
 

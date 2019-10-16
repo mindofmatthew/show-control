@@ -23,7 +23,7 @@ exports.panopticon = async scoreFile => {
       await fs.readFile(path.join(__dirname, 'defaultScore.json'))
     );
     await fs.mkdir(path.dirname(scorePath), { recursive: true });
-    await fs.writeFile(scorePath, JSON.stringify(score));
+    await fs.writeFile(scorePath, JSON.stringify(score, null, 2));
   }
 
   // Init plugins
@@ -36,14 +36,18 @@ exports.panopticon = async scoreFile => {
 
   let saveTimeout = 0;
 
+  let state = { volatile: {}, ...score };
+
   app.ws('/_/score', ws => {
-    ws.send(JSON.stringify(score));
+    ws.send(JSON.stringify(state));
 
     ws.on('message', action => {
-      score = reducer(score, JSON.parse(action));
-      ws.send(JSON.stringify(score));
+      state = reducer(state, JSON.parse(action));
+      ws.send(JSON.stringify(state));
       clearTimeout(saveTimeout);
       saveTimeout = setTimeout(() => {
+        // Exclude volatile parts of the state from the score file.
+        const { volatile: _, ...score } = state;
         fs.writeFile(scoreFile, JSON.stringify(score, null, 2));
       }, 1000);
     });

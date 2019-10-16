@@ -56,6 +56,7 @@ function App() {
             dispatch={dispatch}
             config={score.config}
             cue={cue}
+            current={cue.id === score.volatile.currentCue}
           />
         ))}
       </ul>

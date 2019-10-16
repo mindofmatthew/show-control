@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -6,7 +6,13 @@ import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 import { Cue as DMXCue } from '../../../plugins/dmx/components/Cue';
 import { Cue as ProjectionCue } from '../../../plugins/projection/components/Cue';
 
-export function Cue({ config, dispatch, cue: { id, name, data }, locked }) {
+export function Cue({
+  config,
+  dispatch,
+  cue: { id, name, data },
+  locked,
+  current
+}) {
   let [editing, setEditing] = useState(false);
 
   useEffect(() => {
@@ -15,8 +21,14 @@ export function Cue({ config, dispatch, cue: { id, name, data }, locked }) {
     }
   }, [locked, setEditing]);
 
+  const ref = useRef(null);
+
   return (
-    <li className="cue">
+    <li
+      className={['cue', current ? 'current' : ''].join(' ')}
+      onClick={() => {
+        dispatch({ type: 'SET_CURRENT_CUE', id });
+      }}>
       <div className="header">
         <h3>Cue Title</h3>
         <div className="controls">
@@ -28,8 +40,9 @@ export function Cue({ config, dispatch, cue: { id, name, data }, locked }) {
             <FontAwesomeIcon icon={faEdit} />
           </button>
           <button
-            onClick={() => {
+            onClick={e => {
               dispatch({ type: 'DELETE_CUE', id });
+              e.stopPropagation();
             }}>
             <FontAwesomeIcon icon={faTrash} />
           </button>

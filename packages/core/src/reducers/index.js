@@ -5,9 +5,14 @@ exports.reducer = (state, action) => {
   switch (action.type) {
     case 'CHANGE_TITLE':
       return { ...state, title: action.value };
+    case 'SET_CURRENT_CUE':
+      return {
+        ...state,
+        volatile: { ...state.volatile, currentCue: action.id }
+      };
     default:
       return {
-        title: state.title,
+        ...state,
         config: config.reducer(state.config, action),
         cues: cues.reducer(state.cues, action)
       };
