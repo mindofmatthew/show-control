@@ -51,7 +51,7 @@ function LightCue({ light: { id, name, type }, enabled, value, dispatch }) {
           checked={enabled}
           onChange={({ target: { checked } }) => {
             if (checked) {
-              dispatch({ type: 'ADD_LIGHT_CUE', id });
+              dispatch({ type: 'ADD_LIGHT_CUE', id, lightType: type });
             } else {
               dispatch({ type: 'DELETE_LIGHT_CUE', id });
             }
