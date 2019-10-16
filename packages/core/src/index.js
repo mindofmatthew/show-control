@@ -56,6 +56,10 @@ exports.panopticon = async scoreFile => {
   app.use('/plugins/projection', projectionRouter);
 
   app.use(express.static(path.join(__dirname, '../public')));
+  app.use(
+    '/assets',
+    express.static(path.join(path.dirname(scorePath), 'assets'))
+  );
   app.use(express.text());
 
   app.listen(port, () => console.log(`Serving on port ${port}`));
