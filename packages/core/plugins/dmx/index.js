@@ -1,18 +1,20 @@
-const SerialPort = require('serialport');
+const { EnttecUSBDMXPRO: DMX } = require('./drivers/enttec-dmx-usb-pro.js');
 
-SerialPort.list().then(info => console.log(JSON.stringify(info, null, 2)));
+let dmx;
 
-// const DMX = require('dmx');
+try {
+  dmx = new DMX('/dev/tty.usbserial-EN272481');
+} catch (error) {
+  console.log(error);
+  console.log('Error accessing DMX device');
+  dmx = null;
+}
 
-// let dmx = null;
-//
-// try {
-//   let newDmx = new DMX();
-//   newDmx.addUniverse('main', 'enttec-usb-dmx-pro', '');
-//   dmx = newDmx;
-// } catch (error) {
-//   console.log('DMX controller not found');
-// }
+if (dmx) {
+  dmx.updateAll(50);
+  // XMLHTTPRequest
+  // XmlHttpRequest
+}
 
 let currentCue;
 
