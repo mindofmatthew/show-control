@@ -38,7 +38,7 @@ exports.panopticon = async scoreFile => {
 
   let saveTimeout = 0;
 
-  let state = { volatile: {}, ...score };
+  let state = { volatile: { currentCue: null }, ...score };
 
   dmx.update(state);
 
