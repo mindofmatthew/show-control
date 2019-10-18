@@ -3,6 +3,8 @@ const express = require('express');
 const expressWS = require('express-ws');
 const fs = require('fs').promises;
 
+const dmx = require('../plugins/dmx');
+
 const {
   init: projectionInit,
   router: projectionRouter
@@ -36,26 +38,44 @@ exports.panopticon = async scoreFile => {
 
   let saveTimeout = 0;
 
-  let state = { volatile: {}, ...score };
+  let state = { volatile: { currentCue: null }, ...score };
+
+  dmx.update(state);
+
+  function updateState(action) {
+    state = reducer(state, JSON.parse(action));
+
+    dmx.update(state);
+
+    clearTimeout(saveTimeout);
+    saveTimeout = setTimeout(() => {
+      fs.writeFile(
+        scoreFile,
+        JSON.stringify(
+          state,
+          (name, value) => (name === 'volatile' ? undefined : value),
+          2
+        )
+      );
+    }, 1000);
+  }
 
   app.ws('/_/score', ws => {
     ws.send(JSON.stringify(state));
 
     ws.on('message', action => {
-      state = reducer(state, JSON.parse(action));
+      updateState(action);
       ws.send(JSON.stringify(state));
-      clearTimeout(saveTimeout);
-      saveTimeout = setTimeout(() => {
-        // Exclude volatile parts of the state from the score file.
-        const { volatile: _, ...score } = state;
-        fs.writeFile(scoreFile, JSON.stringify(score, null, 2));
-      }, 1000);
     });
   });
 
   app.use('/plugins/projection', projectionRouter);
 
   app.use(express.static(path.join(__dirname, '../public')));
+  app.use(
+    '/assets',
+    express.static(path.join(path.dirname(scorePath), 'assets'))
+  );
   app.use(express.text());
 
   app.listen(port, () => console.log(`Serving on port ${port}`));

@@ -115,42 +115,105 @@ function unpackCorners({ northwest, northeast, southwest, southeast }) {
 }
 
 class Projection {
-  constructor(context, shaderProgram) {
-    this.context = context;
+  constructor(context, shaderProgram, image) {
+    this.gl = context;
     this.shader = shaderProgram;
-    this.buffer = this.context.createBuffer();
+    this.buffer = this.gl.createBuffer();
+    this.texCoordBuffer = this.gl.createBuffer();
 
-    this.attribute = this.context.getAttribLocation(
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texCoordBuffer);
+    this.gl.bufferData(
+      this.gl.ARRAY_BUFFER,
+      new Float32Array([
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        0.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0,
+        0.0,
+        1.0,
+        1.0
+      ]),
+      this.gl.STATIC_DRAW
+    );
+
+    this.aLocs = {};
+    this.aLocs.position = this.gl.getAttribLocation(
       this.shader,
       'aVertexPosition'
     );
+
+    this.aLocs.texCoord = this.gl.getAttribLocation(this.shader, 'aTexCoord');
+
+    // function render(image) {
+    //   var texCoordLocation = gl.getAttribLocation(program, 'a_texCoord');
+    //
+    //   // provide texture coordinates for the rectangle.
+    //   var texCoordBuffer = gl.createBuffer();
+    //
+    //   gl.enableVertexAttribArray(texCoordLocation);
+    //   gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
+    //
+    //   // Create a texture.
+    //   var texture = gl.createTexture();
+    //   gl.bindTexture(gl.TEXTURE_2D, texture);
+    //
+    //   // Set the parameters so we can render any size image.
+    //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+    //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+    //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+    //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+    //
+    //   // Upload the image into the texture.
+    //   gl.texImage2D(
+    //     gl.TEXTURE_2D,
+    //     0,
+    //     gl.RGBA,
+    //     gl.RGBA,
+    //     gl.UNSIGNED_BYTE,
+    //     image
+    //   );
+    // }
   }
 
   enable() {}
 
+  updateImage(path) {
+    var image = new Image();
+    image.src = '/assets/kitten.jpeg';
+    image.onload = () => {
+      console.log('loaded');
+      this.render();
+    };
+  }
+
   update(corners) {
     const positions = unpackCorners(corners);
-    this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffer);
-    this.context.bufferData(
-      this.context.ARRAY_BUFFER,
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+    this.gl.bufferData(
+      this.gl.ARRAY_BUFFER,
       new Float32Array(positions),
-      this.context.STATIC_DRAW
+      this.gl.STATIC_DRAW
     );
   }
 
   render() {
-    this.context.bindBuffer(this.context.ARRAY_BUFFER, this.buffer);
-    this.context.vertexAttribPointer(
-      this.attribute,
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
+    this.gl.vertexAttribPointer(
+      this.aLocs.position,
       2,
-      this.context.FLOAT,
+      this.gl.FLOAT,
       false,
       0,
       0
     );
-    this.context.enableVertexAttribArray(this.attribute);
+    this.gl.enableVertexAttribArray(this.aLocs.position);
 
-    this.context.drawArrays(this.context.TRIANGLE_STRIP, 0, 4);
+    this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
   }
 
   disable() {}
