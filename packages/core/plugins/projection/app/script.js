@@ -1,3 +1,6 @@
+const imageFormats = ['.jpg', '.jpeg', '.png', '.webp'];
+const videoFormats = ['.mp4', '.webm'];
+
 async function main() {
   //Set up canvas resizing
   const canvas = document.getElementById('renderer');
@@ -80,9 +83,9 @@ async function main() {
         break;
       case 'EDIT':
         projections[action.projection.id].update(action.projection.corners);
-        const img = new Image();
-        img.src = action.projection.asset;
-        document.body.appendChild(img);
+        // const img = new Image();
+        // img.src = '/assets/' + action.projection.asset;
+        // document.body.appendChild(img);
         break;
     }
 
@@ -150,7 +153,6 @@ class Projection {
     this.aLocs.texCoord = this.gl.getAttribLocation(this.shader, 'aTexCoord');
 
     // function render(image) {
-    //   var texCoordLocation = gl.getAttribLocation(program, 'a_texCoord');
     //
     //   // provide texture coordinates for the rectangle.
     //   var texCoordBuffer = gl.createBuffer();
@@ -178,11 +180,19 @@ class Projection {
     //     image
     //   );
     // }
+
+    updateImage();
   }
 
   enable() {}
 
   updateImage(path) {
+    if (imageFormats.some(ext => path.endsWith(ext))) {
+      // Image format
+    } else if (videoFormats.some(ext => path.endsWith(ext))) {
+      // Video format
+    }
+
     var image = new Image();
     image.src = '/assets/kitten.jpeg';
     image.onload = () => {

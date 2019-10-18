@@ -2,6 +2,9 @@ const path = require('path');
 const express = require('express');
 const expressWS = require('express-ws');
 
+let previous = null;
+let projections = {};
+
 const router = express.Router();
 expressWS(router);
 
@@ -13,10 +16,14 @@ const sockets = new Set();
 router.ws('/_/feed', ws => {
   sockets.add(ws);
 
-  // Send any projections...
-  ws.send(JSON.stringify({ type: 'ADD', projections }));
+  ws.send(
+    JSON.stringify({ type: 'ADD', projections: Object.values(projections) })
+  );
 
   // Listen for socket close or error? and remove from set
+  ws.on('close', () => {
+    sockets.delete(ws);
+  });
 });
 
 exports.router = router;
@@ -27,25 +34,29 @@ function dispatch(action) {
   }
 }
 
-let previous = null;
-let projections = {};
-
 exports.update = state => {
-  console.log('updating projection');
   // Check for changes in the cue list
   if (!previous || previous.cues !== state.cues) {
     let newProjections = {};
 
     for (let cue of state.cues) {
-      console.log(cue.id);
       for (let projection of cue.data.projection) {
         newProjections[projection.id] = projection;
 
         if (!(projection.id in projections)) {
-          console.log('Add projection');
+          dispatch({ type: 'ADD', projections: [projection] });
         } else {
           if (projections[projection.id] !== projection) {
-            console.log('Update projection');
+            if (projections[projection.id].corners === projection.corners) {
+              dispatch({
+                type: 'EDIT_CORNERS',
+                id: projection.id,
+                corners: projection.corners
+              });
+            }
+
+            if (projections[projection.id].asset === projection.asset) {
+            }
           }
 
           delete projections[projection.id];
@@ -54,31 +65,10 @@ exports.update = state => {
     }
 
     for (let deletedId in projections) {
-      console.log('Delete projection');
+      dispatch({ type: 'DELETE', id: deletedId });
     }
 
     projections = newProjections;
   }
   previous = state;
-};
-
-exports.addCue = c => {
-  projections.push(c);
-  if (latestWs) {
-    latestWs.send(JSON.stringify({ type: 'ADD', projections: [c] }));
-  }
-};
-
-exports.editCue = c => {
-  projections = projections.map(p => (p.id === c.id ? c : p));
-  if (latestWs) {
-    latestWs.send(JSON.stringify({ type: 'EDIT', projection: c }));
-  }
-};
-
-exports.deleteCue = id => {
-  projections = projections.filter(p => p.id !== id);
-  if (latestWs) {
-    latestWs.send(JSON.stringify({ type: 'DELETE', id }));
-  }
 };
