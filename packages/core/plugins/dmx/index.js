@@ -1,32 +1,27 @@
 const { EnttecUSBDMXPRO: DMX } = require('./drivers/enttec-dmx-usb-pro.js');
+const { DMXFallback } = require('./drivers/fallback.js');
 
-let dmx;
+let dmx = new DMXFallback();
 
-try {
-  dmx = new DMX('/dev/tty.usbserial-EN272481');
-} catch (error) {
-  console.log(error);
-  console.log('Error accessing DMX device');
-  dmx = null;
-}
+// try {
+//   dmx = new DMX('/dev/tty.usbserial-EN272481');
+// } catch (error) {
+//   console.log('error connecting to DMX');
+//   dmx = new DMXFallback();
+// }
 
-if (dmx) {
-  dmx.updateAll(50);
-  // XMLHTTPRequest
-  // XmlHttpRequest
-}
-
-let currentCue;
+let previous;
 
 exports.update = state => {
-  if (state.volatile.currentCue !== currentCue) {
-    if (currentCue === null) {
-      console.log('setting dmx to black');
-      // dmx.updateAll('main', 0);
+  if (!previous || state.volatile.currentCue !== previous.volatile.currentCue) {
+    if (state.volatile.currentCue === null) {
+      dmx.jumpTo();
     } else {
+      let cue = state.cues.find(c => c.id === state.volatile.currentCue);
+      console.log(cue.data.dmx);
     }
-
-    currentCue = state.volatile.currentCue;
   } else {
   }
+
+  previous = state;
 };

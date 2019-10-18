@@ -6,7 +6,7 @@ const ENTTEC_PRO_END_OF_MSG = 0xe7;
 const ENTTEC_PRO_SEND_DMX_RQ = 0x06;
 
 class EnttecUSBDMXPRO {
-  constructor(deviceId, options = {}) {
+  constructor(deviceId) {
     const self = this;
 
     this.universe = Buffer.alloc(513, 0);
@@ -22,6 +22,8 @@ class EnttecUSBDMXPRO {
       err => {
         if (!err) {
           self.sendUniverse();
+        } else {
+          throw new Error(err);
         }
       }
     );
