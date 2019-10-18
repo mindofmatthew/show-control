@@ -58,6 +58,7 @@ export function Cue({
           }}
         />
         <ProjectionCue
+          editing={editing}
           config={config.projection}
           data={data.projection}
           dispatch={action => {

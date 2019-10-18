@@ -1,6 +1,7 @@
 const { genId } = require('../../../common');
 
 exports.reducer = (state, action) => {
+  console.log(action);
   switch (action.type) {
     case 'ADD_LIGHT':
       return {

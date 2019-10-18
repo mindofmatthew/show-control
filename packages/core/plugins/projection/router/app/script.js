@@ -80,6 +80,9 @@ async function main() {
         break;
       case 'EDIT':
         projections[action.projection.id].update(action.projection.corners);
+        const img = new Image();
+        img.src = action.projection.asset;
+        document.body.appendChild(img);
         break;
     }
 

@@ -1,6 +1,20 @@
-import React, { useState } from 'react';
+import React from 'react';
 
-export function Cue({ config, data, dispatch }) {
+export function Cue({ editing, data, dispatch }) {
+  if (!editing) {
+    return (
+      <div>
+        <h3>Projection</h3>
+        <ul>
+          {data.map(c => (
+            <li>
+              {c.asset} @ {JSON.stringify(c.corners)}
+            </li>
+          ))}
+        </ul>
+      </div>
+    );
+  }
   return (
     <div>
       <h3>Projection</h3>
@@ -20,6 +34,17 @@ export function Cue({ config, data, dispatch }) {
               maxX={1}
               maxY={1}
             />
+            <input
+              value={c.asset}
+              onChange={({ target: { value } }) => {
+                dispatch({
+                  type: 'EDIT_CUE',
+                  id: c.id,
+                  data: { ...c, asset: value }
+                });
+              }}
+            />
+            <br />
             <button
               onClick={() => {
                 dispatch({ type: 'DELETE_CUE', id: c.id });

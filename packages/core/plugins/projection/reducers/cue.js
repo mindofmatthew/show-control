@@ -11,7 +11,7 @@ exports.reducer = (state, action) => {
     case 'ADD_CUE':
       const newCue = {
         id: genId(),
-        asset: 'foo/bar/baz.webm',
+        asset: '',
         corners: {
           northwest: { x: 0, y: 0 },
           northeast: { x: 1, y: 0 },
