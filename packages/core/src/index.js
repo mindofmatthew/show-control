@@ -10,7 +10,7 @@ const {
   router: projectionRouter
 } = require('../plugins/projection/router');
 
-const { reducer } = require('./reducers');
+const { mutate } = require('./state');
 
 exports.panopticon = async scoreFile => {
   let score = {};
@@ -43,7 +43,7 @@ exports.panopticon = async scoreFile => {
   dmx.update(state);
 
   function updateState(action) {
-    state = reducer(state, JSON.parse(action));
+    state = mutate(state, JSON.parse(action));
 
     dmx.update(state);
 
