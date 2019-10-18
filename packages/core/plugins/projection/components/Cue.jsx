@@ -26,9 +26,9 @@ export function Cue({ editing, data, dispatch }) {
               value={c.corners}
               onChange={corners => {
                 dispatch({
-                  type: 'EDIT_CUE',
+                  type: 'EDIT_CUE_CORNERS',
                   id: c.id,
-                  data: { ...c, corners }
+                  corners
                 });
               }}
               maxX={1}
@@ -38,9 +38,9 @@ export function Cue({ editing, data, dispatch }) {
               value={c.asset}
               onChange={({ target: { value } }) => {
                 dispatch({
-                  type: 'EDIT_CUE',
+                  type: 'EDIT_CUE_ASSET',
                   id: c.id,
-                  data: { ...c, asset: value }
+                  value
                 });
               }}
             />

@@ -4,11 +4,7 @@ const expressWS = require('express-ws');
 const fs = require('fs').promises;
 
 const dmx = require('../plugins/dmx');
-
-const {
-  init: projectionInit,
-  router: projectionRouter
-} = require('../plugins/projection/router');
+const projection = require('../plugins/projection');
 
 const { mutate } = require('./state');
 
@@ -28,9 +24,6 @@ exports.panopticon = async scoreFile => {
     await fs.writeFile(scorePath, JSON.stringify(score, null, 2));
   }
 
-  // Init plugins
-  projectionInit(score);
-
   const app = express();
   const port = 8000;
 
@@ -41,11 +34,13 @@ exports.panopticon = async scoreFile => {
   let state = { volatile: { currentCue: null }, ...score };
 
   dmx.update(state);
+  projection.update(state);
 
   function updateState(action) {
     state = mutate(state, JSON.parse(action));
 
     dmx.update(state);
+    projection.update(state);
 
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(() => {
@@ -69,7 +64,7 @@ exports.panopticon = async scoreFile => {
     });
   });
 
-  app.use('/plugins/projection', projectionRouter);
+  app.use('/plugins/projection', projection.router);
 
   app.use(express.static(path.join(__dirname, '../public')));
   app.use(
