@@ -47,7 +47,7 @@ exports.update = state => {
           dispatch({ type: 'ADD', projections: [projection] });
         } else {
           if (projections[projection.id] !== projection) {
-            if (projections[projection.id].corners === projection.corners) {
+            if (projections[projection.id].corners !== projection.corners) {
               dispatch({
                 type: 'EDIT_CORNERS',
                 id: projection.id,
@@ -55,7 +55,12 @@ exports.update = state => {
               });
             }
 
-            if (projections[projection.id].asset === projection.asset) {
+            if (projections[projection.id].asset !== projection.asset) {
+              dispatch({
+                type: 'EDIT_ASSET',
+                id: projection.id,
+                asset: projection.asset
+              });
             }
           }
 

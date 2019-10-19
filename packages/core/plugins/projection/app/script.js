@@ -74,25 +74,29 @@ async function main() {
     switch (action.type) {
       case 'ADD':
         for (let projection of action.projections) {
-          projections[projection.id] = new Projection(context, shaderProgram);
-          projections[projection.id].update(projection.corners);
+          projections[projection.id] = new Projection(
+            context,
+            shaderProgram,
+            projection.corners,
+            projection.asset
+          );
         }
         break;
       case 'DELETE':
         delete projections[action.id];
         break;
-      case 'EDIT':
-        projections[action.projection.id].update(action.projection.corners);
-        // const img = new Image();
-        // img.src = '/assets/' + action.projection.asset;
-        // document.body.appendChild(img);
+      case 'EDIT_CORNERS':
+        projections[action.id].updateCorners(action.corners);
+        break;
+      case 'EDIT_ASSET':
+        projections[action.id].updateAsset(action.asset);
         break;
     }
 
     render();
   });
 
-  render();
+  requestAnimationFrame(render);
 
   function render() {
     context.clear(context.COLOR_BUFFER_BIT);
@@ -101,6 +105,8 @@ async function main() {
     for (let id in projections) {
       projections[id].render();
     }
+
+    requestAnimationFrame(render);
   }
 }
 
@@ -118,7 +124,7 @@ function unpackCorners({ northwest, northeast, southwest, southeast }) {
 }
 
 class Projection {
-  constructor(context, shaderProgram, image) {
+  constructor(context, shaderProgram, corners, asset) {
     this.gl = context;
     this.shader = shaderProgram;
     this.buffer = this.gl.createBuffer();
@@ -127,20 +133,7 @@ class Projection {
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texCoordBuffer);
     this.gl.bufferData(
       this.gl.ARRAY_BUFFER,
-      new Float32Array([
-        0.0,
-        0.0,
-        1.0,
-        0.0,
-        0.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0,
-        0.0,
-        1.0,
-        1.0
-      ]),
+      new Float32Array([0.0, 0.0, 1.0, 0.0, 0.0, 1.0, 1.0, 1.0]),
       this.gl.STATIC_DRAW
     );
 
@@ -152,56 +145,77 @@ class Projection {
 
     this.aLocs.texCoord = this.gl.getAttribLocation(this.shader, 'aTexCoord');
 
-    // function render(image) {
-    //
-    //   // provide texture coordinates for the rectangle.
-    //   var texCoordBuffer = gl.createBuffer();
-    //
-    //   gl.enableVertexAttribArray(texCoordLocation);
-    //   gl.vertexAttribPointer(texCoordLocation, 2, gl.FLOAT, false, 0, 0);
-    //
-    //   // Create a texture.
-    //   var texture = gl.createTexture();
-    //   gl.bindTexture(gl.TEXTURE_2D, texture);
-    //
-    //   // Set the parameters so we can render any size image.
-    //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-    //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
-    //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
-    //   gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
-    //
-    //   // Upload the image into the texture.
-    //   gl.texImage2D(
-    //     gl.TEXTURE_2D,
-    //     0,
-    //     gl.RGBA,
-    //     gl.RGBA,
-    //     gl.UNSIGNED_BYTE,
-    //     image
-    //   );
-    // }
+    this.uLocs = {};
+    this.uLocs.sampler = this.gl.getUniformLocation(this.shader, 'uSampler');
 
-    updateImage();
+    this.gl.enableVertexAttribArray(this.aLocs.texCoord);
+    this.gl.vertexAttribPointer(
+      this.aLocs.texCoord,
+      2,
+      this.gl.FLOAT,
+      false,
+      0,
+      0
+    );
+
+    // Create a texture.
+    this.texture = this.gl.createTexture();
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+
+    // Set the parameters so we can render any size image.
+    this.gl.texParameteri(
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_WRAP_S,
+      this.gl.CLAMP_TO_EDGE
+    );
+    this.gl.texParameteri(
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_WRAP_T,
+      this.gl.CLAMP_TO_EDGE
+    );
+    this.gl.texParameteri(
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_MIN_FILTER,
+      this.gl.NEAREST
+    );
+    this.gl.texParameteri(
+      this.gl.TEXTURE_2D,
+      this.gl.TEXTURE_MAG_FILTER,
+      this.gl.NEAREST
+    );
+
+    this.updateCorners(corners);
+    this.updateAsset(asset);
   }
 
   enable() {}
 
-  updateImage(path) {
+  updateAsset(path) {
+    console.log(path);
     if (imageFormats.some(ext => path.endsWith(ext))) {
       // Image format
     } else if (videoFormats.some(ext => path.endsWith(ext))) {
       // Video format
+    } else {
+      // Asset is null
     }
 
     var image = new Image();
     image.src = '/assets/kitten.jpeg';
-    image.onload = () => {
-      console.log('loaded');
-      this.render();
-    };
+    image.addEventListener('load', () => {
+      console.log('image loaded');
+      this.gl.texImage2D(
+        this.gl.TEXTURE_2D,
+        0,
+        this.gl.RGBA,
+        this.gl.RGBA,
+        this.gl.UNSIGNED_BYTE,
+        image
+      );
+    });
   }
 
-  update(corners) {
+  updateCorners(corners) {
     const positions = unpackCorners(corners);
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
     this.gl.bufferData(
@@ -222,6 +236,22 @@ class Projection {
       0
     );
     this.gl.enableVertexAttribArray(this.aLocs.position);
+
+    this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texCoordBuffer);
+    this.gl.vertexAttribPointer(
+      this.aLocs.texCoord,
+      2,
+      this.gl.FLOAT,
+      false,
+      0,
+      0
+    );
+    this.gl.enableVertexAttribArray(this.aLocs.texCoord);
+
+    // Tell WebGL we want to affect texture unit 0
+    this.gl.activeTexture(this.gl.TEXTURE0);
+    this.gl.bindTexture(this.gl.TEXTURE_2D, this.texture);
+    this.gl.uniform1i(this.uLocs.sampler, 0);
 
     this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
   }
