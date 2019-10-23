@@ -54,13 +54,12 @@ class EnttecUSBDMXPRO {
     this.dev.close(cb);
   }
 
-  update(u) {
+  jumpTo(u) {
+    this.universe.fill(0);
     for (const c in u) {
       this.universe[c] = u[c];
     }
     this.sendUniverse();
-
-    this.emit('update', u);
   }
 
   updateAll(v) {
