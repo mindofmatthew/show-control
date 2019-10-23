@@ -75,5 +75,18 @@ exports.update = state => {
 
     projections = newProjections;
   }
+
+  if (
+    state.volatile.currentCue &&
+    (!previous || previous.volatile.currentCue !== state.volatile.currentCue)
+  ) {
+    dispatch({
+      type: 'SET_CURRENT_PROJECTIONS',
+      ids: state.cues
+        .find(c => c.id === state.volatile.currentCue)
+        .data.projection.map(p => p.id)
+    });
+  }
+
   previous = state;
 };

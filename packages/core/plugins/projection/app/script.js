@@ -91,6 +91,11 @@ async function main() {
       case 'EDIT_ASSET':
         projections[action.id].updateAsset(action.asset);
         break;
+      case 'SET_CURRENT_PROJECTIONS':
+        for (const [id, projection] of Object.entries(projections)) {
+          projection.enabled = action.ids.includes(id);
+        }
+        break;
     }
 
     render();
@@ -129,6 +134,7 @@ class Projection {
     this.shader = shaderProgram;
     this.buffer = this.gl.createBuffer();
     this.texCoordBuffer = this.gl.createBuffer();
+    this.enabled = true;
 
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.texCoordBuffer);
     this.gl.bufferData(
@@ -188,8 +194,6 @@ class Projection {
     this.updateAsset(asset);
   }
 
-  enable() {}
-
   updateAsset(path) {
     console.log(path);
     if (imageFormats.some(ext => path.endsWith(ext))) {
@@ -226,6 +230,7 @@ class Projection {
   }
 
   render() {
+    if (!this.enabled) return;
     this.gl.bindBuffer(this.gl.ARRAY_BUFFER, this.buffer);
     this.gl.vertexAttribPointer(
       this.aLocs.position,
@@ -255,8 +260,6 @@ class Projection {
 
     this.gl.drawArrays(this.gl.TRIANGLE_STRIP, 0, 4);
   }
-
-  disable() {}
 
   dispose() {}
 }
