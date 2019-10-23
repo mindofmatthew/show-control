@@ -11,10 +11,19 @@ for (let plugin in plugins) {
   emptyData[plugin] = plugins[plugin].empty;
 }
 
+// TODO: audio plugin placeholder
+emptyData.audio = [];
+
 exports.mutate = (draft, action) => {
   switch (action.type) {
     case 'ADD_CUE':
-      draft.push({ id: genId(), name: '', data: emptyData });
+      draft.push({
+        id: genId(),
+        name: '',
+        data: emptyData,
+        // TODO: Child cue placeholder
+        children: []
+      });
       return;
     case 'DELETE_CUE':
       draft.splice(draft.findIndex(cue => cue.id === action.id), 1);
