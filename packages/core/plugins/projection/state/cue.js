@@ -22,10 +22,25 @@ exports.mutate = (draft, action) => {
       draft.push(newCue);
       return;
     case 'EDIT_CUE_CORNERS':
-      draft[draft.findIndex(c => c.id === action.id)].corners = action.corners;
+      draft[draft.findIndex(c => c.id === action.id)].corners = clampCorners(
+        action.corners
+      );
       return;
     case 'EDIT_CUE_ASSET':
       draft[draft.findIndex(c => c.id === action.id)].asset = action.value;
       return;
   }
 };
+
+function clampCorners(corners) {
+  return Object.entries(corners)
+    .map(([k, { x, y }]) => [k, { x: clamp(x), y: clamp(y) }])
+    .reduce((acc, [key, value]) => {
+      acc[key] = value;
+      return acc;
+    }, {});
+}
+
+function clamp(x) {
+  return Math.max(Math.min(x, 1), 0);
+}

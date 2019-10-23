@@ -66,14 +66,7 @@ export function Cue({ editing, data, dispatch }) {
 
 function CornerPicker({ value, onChange, ...config }) {
   return (
-    <div
-      style={{
-        width: 100,
-        height: 100,
-        border: 'solid #eee 5px',
-        background: 'lightgray',
-        position: 'relative'
-      }}>
+    <div className="corner-picker">
       <Thumb
         value={value.northwest}
         onChange={v => onChange({ ...value, northwest: v })}
@@ -101,16 +94,11 @@ function CornerPicker({ value, onChange, ...config }) {
 function Thumb({ value: { x, y }, onChange, maxX, maxY }) {
   return (
     <div
+      className="corner-picker-thumb"
       tabIndex="0"
       style={{
-        width: 10,
-        height: 10,
-        background: 'gray',
-        position: 'absolute',
         left: (x / maxX) * 100 - 5,
-        top: (y / maxY) * 100 - 5,
-        fontSize: 10,
-        borderRadius: 3
+        top: (y / maxY) * 100 - 5
       }}
       onKeyDown={e => {
         let delta = 0.001;
@@ -138,8 +126,9 @@ function Thumb({ value: { x, y }, onChange, maxX, maxY }) {
       }}
       onPointerMove={e => {
         if (!e.target.hasPointerCapture(e.pointerId)) return;
-        const screenX = e.clientX - e.target.parentElement.offsetLeft - 5;
-        const screenY = e.clientY - e.target.parentElement.offsetTop - 5;
+        const { left, top } = e.target.parentElement.getBoundingClientRect();
+        const screenX = e.clientX - left - 5;
+        const screenY = e.clientY - top - 5;
         onChange({
           x: (screenX / 100) * maxX,
           y: (screenY / 100) * maxY
