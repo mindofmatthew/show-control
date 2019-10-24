@@ -2,7 +2,7 @@ import React from 'react';
 
 export function Cue({ editing, data, dispatch }) {
   if (!editing) {
-    return (
+    return data.length > 0 ? (
       <div>
         <h3>Projection</h3>
         <ul>
@@ -13,8 +13,9 @@ export function Cue({ editing, data, dispatch }) {
           ))}
         </ul>
       </div>
-    );
+    ) : null;
   }
+
   return (
     <div>
       <h3>Projection</h3>
