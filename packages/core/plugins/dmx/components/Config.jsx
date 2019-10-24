@@ -34,7 +34,11 @@ function LightConfig({ id, name, channel, type, dispatch }) {
         max="511"
         value={channel}
         onChange={({ target: { value } }) => {
-          dispatch({ type: 'CHANGE_LIGHT_CHANNEL', id, value });
+          dispatch({
+            type: 'CHANGE_LIGHT_CHANNEL',
+            id,
+            value: parseInt(value)
+          });
         }}
       />
       <select

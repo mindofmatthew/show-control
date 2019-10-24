@@ -69,7 +69,7 @@ function LightCue({ light: { id, name, type }, enabled, value, dispatch }) {
             dispatch({
               type: 'EDIT_LIGHT_CUE',
               id,
-              value
+              value: type === 'white' ? parseInt(value) : value
             });
           }}
         />
