@@ -9,7 +9,7 @@ import { Cue as ProjectionCue } from '../../../plugins/projection/components/Cue
 export function Cue({
   config,
   dispatch,
-  cue: { id, name, data },
+  cue: { id, name, description, data },
   locked,
   current
 }) {
@@ -30,7 +30,18 @@ export function Cue({
         dispatch({ type: 'SET_CURRENT_CUE', id });
       }}>
       <div className="header">
-        <h3>Cue Title</h3>
+        <h3>
+          {editing ? (
+            <input
+              value={name}
+              onChange={e =>
+                dispatch({ type: 'EDIT_CUE_NAME', id, name: e.target.value })
+              }
+            />
+          ) : (
+            name
+          )}
+        </h3>
         <div className="controls">
           <button
             className={editing ? 'active' : ''}
@@ -48,6 +59,21 @@ export function Cue({
           </button>
         </div>
       </div>
+      <p>
+        {editing ? (
+          <textarea
+            value={description}
+            onChange={e =>
+              dispatch({
+                type: 'EDIT_CUE_DESCRIPTION',
+                id,
+                description: e.target.value
+              })
+            }></textarea>
+        ) : (
+          description
+        )}
+      </p>
       <div className="data-type">
         <DMXCue
           editing={editing}

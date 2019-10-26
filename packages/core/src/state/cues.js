@@ -20,6 +20,7 @@ exports.mutate = (draft, action) => {
       draft.push({
         id: genId(),
         name: '',
+        description: '',
         data: emptyData,
         // TODO: Child cue placeholder
         children: []
@@ -27,6 +28,12 @@ exports.mutate = (draft, action) => {
       return;
     case 'DELETE_CUE':
       draft.splice(draft.findIndex(cue => cue.id === action.id), 1);
+      return;
+    case 'EDIT_CUE_NAME':
+      draft.find(cue => cue.id === action.id).name = action.name;
+      return;
+    case 'EDIT_CUE_DESCRIPTION':
+      draft.find(cue => cue.id === action.id).description = action.description;
       return;
     case 'EDIT_PLUGIN':
       draft.forEach(cue => {
