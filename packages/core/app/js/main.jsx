@@ -10,20 +10,36 @@ function App() {
   let [score, setScore] = useState(null);
 
   useEffect(() => {
-    const socket = new WebSocket(`ws://${location.host}/_/score`);
+    let timeoutId;
 
-    socket.addEventListener('open', () => {
-      setDispatch(() => action => {
-        socket.send(JSON.stringify(action));
+    function connect() {
+      const socket = new WebSocket(`ws://${location.host}/_/score`);
+
+      socket.addEventListener('open', () => {
+        console.info('Connection established');
+        setDispatch(() => action => {
+          socket.send(JSON.stringify(action));
+        });
       });
-    });
 
-    socket.addEventListener('message', event => {
-      setScore(JSON.parse(event.data));
-    });
+      socket.addEventListener('message', event => {
+        setScore(JSON.parse(event.data));
+      });
+
+      socket.addEventListener('close', () => {
+        console.warn('Lost connection to server, trying to reconnect');
+        setDispatch(null);
+        clearTimeout(timeoutId);
+        timeoutId = setTimeout(() => {
+          connect();
+        }, 1000);
+      });
+    }
+    connect();
 
     return () => {
       socket.close();
+      clearTimeout(timeoutId);
     };
   }, []);
 

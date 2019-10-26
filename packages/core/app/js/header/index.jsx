@@ -35,6 +35,7 @@ export function Header({
         }}>
         <FontAwesomeIcon icon={locked ? faLock : faUnlock} />
       </button>
+      {dispatch ? <i>Connected</i> : <b>Disconnected</b>}
     </header>
   );
 }
