@@ -2,6 +2,7 @@ const path = require('path');
 const express = require('express');
 const expressWS = require('express-ws');
 const fs = require('fs').promises;
+const { watch } = require('fs');
 
 const dmx = require('../plugins/dmx');
 const projection = require('../plugins/projection');
@@ -33,6 +34,8 @@ exports.panopticon = async scoreFile => {
 
   let state = { volatile: { currentCue: null }, ...score };
 
+  let updatingScoreFile = false;
+
   dmx.update(state);
   projection.update(state);
 
@@ -43,8 +46,9 @@ exports.panopticon = async scoreFile => {
     projection.update(state);
 
     clearTimeout(saveTimeout);
-    saveTimeout = setTimeout(() => {
-      fs.writeFile(
+    saveTimeout = setTimeout(async () => {
+      updatingScoreFile = true;
+      await fs.writeFile(
         scoreFile,
         JSON.stringify(
           state,
@@ -52,6 +56,7 @@ exports.panopticon = async scoreFile => {
           2
         )
       );
+      updatingScoreFile = false;
     }, 1000);
   }
 
@@ -61,6 +66,20 @@ exports.panopticon = async scoreFile => {
     ws.on('message', action => {
       updateState(action);
       ws.send(JSON.stringify(state));
+    });
+
+    let timeoutId;
+    watch(scorePath).on('change', () => {
+      if (updatingScoreFile) return;
+      clearTimeout(timeoutId);
+      // Debounce the update because when a file is saved, at
+      // least in the Chrome OS editor, multiple events come
+      // in and the first one is too early; the file is
+      // incomplete, leading to JSON parse errors.
+      timeoutId = setTimeout(async () => {
+        state = { ...state, ...JSON.parse(await fs.readFile(scorePath)) };
+        ws.send(JSON.stringify(state));
+      }, 50);
     });
   });
 
