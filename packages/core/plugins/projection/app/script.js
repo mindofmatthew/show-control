@@ -66,40 +66,52 @@ async function main() {
 
   let projections = {};
 
-  //Set up websocket
-  const ws = new WebSocket(`ws:${location.host}/plugins/projection/_/feed`);
-  ws.addEventListener('message', m => {
-    let action = JSON.parse(m.data);
+  function setUpWebSocket() {
+    const ws = new WebSocket(`ws:${location.host}/plugins/projection/_/feed`);
 
-    switch (action.type) {
-      case 'ADD':
-        for (let projection of action.projections) {
-          projections[projection.id] = new Projection(
-            context,
-            shaderProgram,
-            projection.corners,
-            projection.asset
-          );
-        }
-        break;
-      case 'DELETE':
-        delete projections[action.id];
-        break;
-      case 'EDIT_CORNERS':
-        projections[action.id].updateCorners(action.corners);
-        break;
-      case 'EDIT_ASSET':
-        projections[action.id].updateAsset(action.asset);
-        break;
-      case 'SET_CURRENT_PROJECTIONS':
-        for (const [id, projection] of Object.entries(projections)) {
-          projection.enabled = action.ids.includes(id);
-        }
-        break;
-    }
+    ws.addEventListener('open', () => {
+      console.info('Connection established');
+    });
 
-    render();
-  });
+    ws.addEventListener('message', m => {
+      let action = JSON.parse(m.data);
+
+      switch (action.type) {
+        case 'ADD':
+          for (let projection of action.projections) {
+            projections[projection.id] = new Projection(
+              context,
+              shaderProgram,
+              projection.corners,
+              projection.asset
+            );
+          }
+          break;
+        case 'DELETE':
+          delete projections[action.id];
+          break;
+        case 'EDIT_CORNERS':
+          projections[action.id].updateCorners(action.corners);
+          break;
+        case 'EDIT_ASSET':
+          projections[action.id].updateAsset(action.asset);
+          break;
+        case 'SET_CURRENT_PROJECTIONS':
+          for (const [id, projection] of Object.entries(projections)) {
+            projection.enabled = action.ids.includes(id);
+          }
+          break;
+      }
+
+      render();
+    });
+
+    ws.addEventListener('close', () => {
+      console.info('Lost websocket connection, attempting to reconnect');
+      setTimeout(setUpWebSocket, 1000);
+    });
+  }
+  setUpWebSocket();
 
   requestAnimationFrame(render);
 
