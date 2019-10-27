@@ -195,28 +195,41 @@ class Projection {
   }
 
   updateAsset(path) {
-    console.log(path);
+    let image = new Uint8Array([0, 0, 255, 255]);
+    this.gl.texImage2D(
+      this.gl.TEXTURE_2D,
+      0,
+      this.gl.RGBA,
+      1,
+      1,
+      0,
+      this.gl.RGBA,
+      this.gl.UNSIGNED_BYTE,
+      image
+    );
+
     if (imageFormats.some(ext => path.endsWith(ext))) {
       // Image format
+      image = new Image();
+      image.src = `/assets/${path}`;
     } else if (videoFormats.some(ext => path.endsWith(ext))) {
       // Video format
-    } else {
-      // Asset is null
-    }
+      image = document.createElement('video');
+      image.src = `/assets/${path}`;
 
-    var image = new Image();
-    image.src = '/assets/kitten.jpeg';
-    image.addEventListener('load', () => {
-      console.log('image loaded');
-      this.gl.texImage2D(
-        this.gl.TEXTURE_2D,
-        0,
-        this.gl.RGBA,
-        this.gl.RGBA,
-        this.gl.UNSIGNED_BYTE,
-        image
-      );
-    });
+      image.addEventListener('timeupdate', () => {
+        this.gl.texImage2D(
+          this.gl.TEXTURE_2D,
+          0,
+          this.gl.RGBA,
+          this.gl.RGBA,
+          this.gl.UNSIGNED_BYTE,
+          image
+        );
+      });
+    } else {
+      image = new Uint8Array([0, 0, 255, 255]);
+    }
   }
 
   updateCorners(corners) {
