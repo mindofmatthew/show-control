@@ -5,7 +5,8 @@ exports.empty = [];
 const defaultCueData = {
   asset: '',
   attack: 0,
-  release: 0
+  release: 0,
+  loop: false
 };
 
 exports.mutate = (draft, action) => {
@@ -21,10 +22,13 @@ exports.mutate = (draft, action) => {
       draft.find(c => c.id === action.id).asset = action.value;
       return;
     case 'EDIT_CUE_ATTACK':
-      draft.find(c => c.id === action.id).attack = action.value;
+      draft.find(c => c.id === action.id).attack = Number(action.value);
       return;
     case 'EDIT_CUE_RELEASE':
-      draft.find(c => c.id === action.id).release = action.value;
+      draft.find(c => c.id === action.id).release = Number(action.value);
+      return;
+    case 'EDIT_CUE_LOOP':
+      draft.find(c => c.id === action.id).loop = action.value;
       return;
   }
 };
