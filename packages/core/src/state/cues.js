@@ -4,6 +4,7 @@ const plugins = {};
 
 plugins.dmx = require('../../plugins/dmx/state/cue');
 plugins.projection = require('../../plugins/projection/state/cue');
+plugins.audio = require('../../plugins/audio/state/cue');
 
 const emptyData = {};
 
