@@ -4,6 +4,9 @@ import { render } from 'react-dom';
 import { Header } from './header';
 import { Cue } from './cue';
 import { Config } from './config';
+import { main } from '../../plugins/audio/client/script';
+
+main();
 
 function App() {
   let [dispatch, setDispatch] = useState(null);

@@ -23,7 +23,8 @@
     "nodemon": "^1.19.3",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
-    "serialport": "^7.1.5"
+    "serialport": "^7.1.5",
+    "tone": "^13.8.25"
   },
   "devDependencies": {
     "@babel/core": "^7.6.2",

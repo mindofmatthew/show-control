@@ -5,6 +5,7 @@ import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
 
 import { Cue as DMXCue } from '../../../plugins/dmx/components/Cue';
 import { Cue as ProjectionCue } from '../../../plugins/projection/components/Cue';
+import { Cue as AudioCue } from '../../../plugins/audio/components/Cue';
 
 export function Cue({
   config,
@@ -91,6 +92,19 @@ export function Cue({
             dispatch({
               type: 'EDIT_CUE_PLUGIN',
               plugin: 'projection',
+              action,
+              id
+            });
+          }}
+        />
+        <AudioCue
+          editing={editing}
+          config={config.audio}
+          data={data.audio}
+          dispatch={action => {
+            dispatch({
+              type: 'EDIT_CUE_PLUGIN',
+              plugin: 'audio',
               action,
               id
             });
