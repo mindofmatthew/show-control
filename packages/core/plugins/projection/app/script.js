@@ -4,6 +4,13 @@ const videoFormats = ['.mp4', '.webm'];
 function main() {
   let projections = {};
 
+  //Set up resizing
+  window.addEventListener('resize', () => {
+    for (let id in projections) {
+      projections[id].resize();
+    }
+  });
+
   //Set up websocket
   const ws = new WebSocket(`ws:${location.host}/plugins/projection/_/feed`);
   ws.addEventListener('message', m => {
@@ -19,6 +26,7 @@ function main() {
         }
         break;
       case 'DELETE':
+        projections[action.id].dispose();
         delete projections[action.id];
         break;
       case 'EDIT_CORNERS':
@@ -52,9 +60,34 @@ function unpackCorners({ northwest, northeast, southwest, southeast }) {
 class Projection {
   constructor(asset, corners) {
     this.element = null;
+    this.corners = [0, 0, 1, 0, 0, 1, 1, 1];
+
+    this._enabled = false;
 
     this.updateAsset(asset);
     this.updateCorners(corners);
+  }
+
+  get enabled() {
+    return this._enabled;
+  }
+
+  set enabled(value) {
+    this._enabled = value;
+    this._updateEnabled();
+  }
+
+  _updateEnabled() {
+    this.element.style.display = this.enabled ? 'block' : 'none';
+
+    if (this.element.tagName === 'VIDEO') {
+      if (this.enabled) {
+        this.element.play();
+      } else {
+        this.element.pause();
+        this.element.currentTime = 0;
+      }
+    }
   }
 
   updateAsset(path) {
@@ -70,27 +103,31 @@ class Projection {
       // Video format
       this.element = document.createElement('video');
       this.element.src = `/assets/${path}`;
+      this.element.load();
+      this.element.muted = true;
+      this.element.loop = true;
     } else {
       this.element = document.createElement('div');
       this.element.classList.add('empty');
     }
 
     document.body.appendChild(this.element);
+    this.resize();
+    this._updateEnabled();
   }
 
   updateCorners(corners) {
-    let positions = unpackCorners(corners);
-    positions = positions.map((pos, index) => {
-      if (index % 2 === 0) {
-        return pos * window.innerWidth;
-      } else {
-        return pos * window.innerHeight;
-      }
-    });
+    this.corners = unpackCorners(corners);
+    this.resize();
+  }
 
-    console.log(positions);
-
-    transform2d(this.element, ...positions);
+  resize() {
+    transform2d(
+      this.element,
+      ...this.corners.map(
+        (c, i) => c * (i % 2 === 0 ? window.innerWidth : window.innerHeight)
+      )
+    );
   }
 
   dispose() {
@@ -181,9 +218,8 @@ function project(m, x, y) {
 }
 
 function transform2d(elt, x1, y1, x2, y2, x3, y3, x4, y4) {
-  var w = elt.offsetWidth,
-    h = elt.offsetHeight;
-  console.log(w, h);
+  var w = window.innerWidth,
+    h = window.innerHeight;
   var t = general2DProjection(
     0,
     0,
