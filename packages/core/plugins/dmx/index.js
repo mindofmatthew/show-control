@@ -1,4 +1,4 @@
-const { EnttecUSBDMXPRO: DMX } = require('./drivers/enttec-dmx-usb-pro.js');
+// const { EnttecUSBDMXPRO: DMX } = require('./drivers/enttec-dmx-usb-pro.js');
 const { DMXFallback } = require('./drivers/fallback.js');
 
 // TODO: This code is basically what I want, but it doesn't work right if
