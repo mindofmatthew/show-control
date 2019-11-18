@@ -84,39 +84,14 @@ header button {
 .cue-list {
   list-style: none;
   padding: 0 10px;
-  counter-reset: cue-number;
 }
 
 .cue {
-  margin: 10px 0;
   background: var(--color-1);
-  counter-increment: cue-number;
 }
 
-.cue .header {
+.cue:nth-child(2n) {
   background: var(--color-2);
-  display: flex;
-  position: relative;
-}
-
-.cue.current .header {
-  background: var(--color-7);
-  color: white;
-}
-
-.cue .header::before {
-  content: counters(cue-number, '.') ' ';
-  display: block;
-  color: var(--color-8);
-  background: var(--color-3);
-}
-
-.cue .header::before,
-.cue .header h3 {
-  margin: 0;
-  padding: 4px 8px;
-  font-weight: bold;
-  font-size: 17px;
 }
 
 .cue .controls {

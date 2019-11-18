@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faEdit, faTrash } from '@fortawesome/free-solid-svg-icons';
@@ -8,29 +8,23 @@ import { Cue as ProjectionCue } from '../../../plugins/projection/components/Cue
 import { Cue as AudioCue } from '../../../plugins/audio/components/Cue';
 
 export function Cue({
-  config,
   dispatch,
   cue: { id, name, description, data },
-  locked,
-  current
+  selected
 }) {
-  let [editing, setEditing] = useState(false);
-
-  useEffect(() => {
-    if (locked) {
-      setEditing(false);
-    }
-  }, [locked, setEditing]);
-
-  const ref = useRef(null);
-
-  return (
-    <li
-      className={['cue', current ? 'current' : ''].join(' ')}
-      onClick={() => {
+    return (
+      <tr className={['cue', selected ? 'current' : ''].join(' ')} onClick={() => {
         dispatch({ type: 'SET_CURRENT_CUE', id });
-      }}>
-      <div className="header">
+      }}><td></td><td>
+      New Cue...
+      <button
+        onClick={e => {
+          dispatch({ type: 'DELETE_CUE', id });
+          e.stopPropagation();
+        }}>
+        <FontAwesomeIcon icon={faTrash} />
+      </button>
+      {/* <div className="header">
         <h3>
           {editing ? (
             <input
@@ -110,7 +104,20 @@ export function Cue({
             });
           }}
         />
-      </div>
-    </li>
+      </div> */}
+    </td></tr>
   );
+}
+
+export function CueList({ cues, dispatch }) {
+  return <table>
+    <thead><tr><th>#</th><th>Name</th></tr></thead>
+    <tbody>{cues.map(cue => (
+      <Cue
+        key={cue.id}
+        dispatch={dispatch}
+        cue={cue}
+      />
+    ))}</tbody>
+  </table>;
 }

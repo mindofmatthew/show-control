@@ -6,7 +6,7 @@ const { watch } = require('fs');
 
 const dmx = require('../plugins/dmx');
 const projection = require('../plugins/projection');
-const audio = require('../plugins/audio');
+// const audio = require('../plugins/audio');
 
 const { mutate } = require('./state');
 
@@ -39,14 +39,14 @@ exports.panopticon = async scoreFile => {
 
   dmx.update(state);
   projection.update(state);
-  audio.update(state);
+  // audio.update(state);
 
   function updateState(action) {
     state = mutate(state, JSON.parse(action));
 
     dmx.update(state);
     projection.update(state);
-    audio.update(state);
+    // audio.update(state);
 
     clearTimeout(saveTimeout);
     saveTimeout = setTimeout(async () => {
@@ -87,7 +87,7 @@ exports.panopticon = async scoreFile => {
   });
 
   app.use('/plugins/projection', projection.router);
-  app.use('/plugins/audio', audio.router);
+  // app.use('/plugins/audio', audio.router);
 
   app.use(express.static(path.join(__dirname, '../public')));
   app.use(

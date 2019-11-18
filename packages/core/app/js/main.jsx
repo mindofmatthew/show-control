@@ -2,11 +2,8 @@ import React, { useState, useEffect } from 'react';
 import { render } from 'react-dom';
 
 import { Header } from './header';
-import { Cue } from './cue';
+import { CueList } from './cue';
 import { Config } from './config';
-import { main } from '../../plugins/audio/client/script';
-
-main();
 
 function App() {
   let [dispatch, setDispatch] = useState(null);
@@ -45,6 +42,25 @@ function App() {
       clearTimeout(timeoutId);
     };
   }, []);
+  
+  useEffect(() => {
+    window.addEventListener('keydown', evt => {
+      switch(evt.key) {
+        case 'Backspace':
+          console.log('delete cue');
+          return;
+        case 'ArrowUp':
+          console.log('up arrow');
+          return;
+        case 'ArrowDown':
+          console.log('down arrow');
+          return;
+        default:
+          console.log(evt.key);
+          return;
+      }
+    });
+  }, []);
 
   let [locked, setLocked] = useState(localStorage.getItem('locked') === 'true');
   useEffect(() => {
@@ -68,17 +84,7 @@ function App() {
         dispatch={dispatch}
       />
       <Config open={configuring} config={score.config} dispatch={dispatch} />
-      <ul className="cue-list">
-        {score.cues.map(cue => (
-          <Cue
-            key={cue.id}
-            dispatch={dispatch}
-            config={score.config}
-            cue={cue}
-            current={cue.id === score.volatile.currentCue}
-          />
-        ))}
-      </ul>
+      <CueList cues={score.cues} dispatch={dispatch} />
       <button onClick={() => dispatch({ type: 'ADD_CUE' })}>Add Cue</button>
     </>
   );
