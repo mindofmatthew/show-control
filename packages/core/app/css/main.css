@@ -82,8 +82,7 @@ header button {
 }
 
 .cue-list {
-  list-style: none;
-  padding: 0 10px;
+  width: 100%;
 }
 
 .cue {

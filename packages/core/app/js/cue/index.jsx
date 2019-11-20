@@ -110,7 +110,7 @@ export function Cue({
 }
 
 export function CueList({ cues, dispatch }) {
-  return <table>
+  return <table className="cue-list">
     <thead><tr><th>#</th><th>Name</th></tr></thead>
     <tbody>{cues.map(cue => (
       <Cue
