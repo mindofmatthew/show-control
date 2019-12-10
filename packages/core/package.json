@@ -3,7 +3,7 @@
   "description": "NodeJS/Browser-based system for controlling technology in live performance.",
   "main": "src/index.js",
   "scripts": {
-    "dev": "nodemon src/cli.js dev/score.json & parcel watch app/index.html --out-dir public --no-hmr",
+    "dev": "nodemon --ignore /dev src/cli.js dev/score.json & parcel watch app/index.html --out-dir public --no-hmr",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
